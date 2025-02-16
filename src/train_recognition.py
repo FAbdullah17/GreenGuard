@@ -9,23 +9,18 @@ from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
-# ---------------------------
-# Configurations and Paths
-# ---------------------------
+
 DATA_PROCESSED_DIR = os.path.join("data", "processed")
 ANNOTATIONS_FILE = os.path.join("data", "annotations", "annotations.csv")
 MODEL_SAVE_DIR = os.path.join("models", "recognition")
 os.makedirs(MODEL_SAVE_DIR, exist_ok=True)
 
-# Model Hyperparameters
 IMAGE_SIZE = (224, 224)
 BATCH_SIZE = 32
 EPOCHS = 30
 LEARNING_RATE = 1e-4
 
-# ---------------------------
-# Step 1: Prepare the DataFrame
-# ---------------------------
+
 df = pd.read_csv(ANNOTATIONS_FILE)
 df["class"] = df["crop"].str.lower() + "_" + df["disease"].str.lower()
 
@@ -38,9 +33,6 @@ train_df, val_df = train_test_split(df, test_size=0.15, random_state=42, stratif
 num_classes = train_df["class"].nunique()
 print(f"Number of classes: {num_classes}")
 
-# ---------------------------
-# Step 3: Set Up Image Data Generators
-# ---------------------------
 train_datagen = ImageDataGenerator(
     preprocessing_function=preprocess_input,
     rotation_range=20,
@@ -74,9 +66,6 @@ validation_generator = val_datagen.flow_from_dataframe(
     shuffle=False
 )
 
-# ---------------------------
-# Step 4: Build the Model with MobileNetV2
-# ---------------------------
 base_model = MobileNetV2(weights="imagenet", include_top=False, input_shape=IMAGE_SIZE + (3,))
 base_model.trainable = False
 
@@ -93,18 +82,12 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
 
 model.summary()
 
-# ---------------------------
-# Step 5: Set Up Callbacks for Training
-# ---------------------------
 checkpoint_path = os.path.join(MODEL_SAVE_DIR, "best_model.h5")
 checkpoint = ModelCheckpoint(checkpoint_path, monitor="val_accuracy", verbose=1,
                              save_best_only=True, mode="max")
 
 early_stop = EarlyStopping(monitor="val_loss", patience=5, verbose=1, restore_best_weights=True)
 
-# ---------------------------
-# Step 6: Train the Model
-# ---------------------------
 history = model.fit(
     train_generator,
     epochs=EPOCHS,
@@ -112,7 +95,6 @@ history = model.fit(
     callbacks=[checkpoint, early_stop]
 )
 
-# Save final model
 final_model_path = os.path.join(MODEL_SAVE_DIR, "final_model.h5")
 model.save(final_model_path)
 print(f"Final model saved to: {final_model_path}")
