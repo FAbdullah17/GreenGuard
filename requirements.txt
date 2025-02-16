@@ -2,3 +2,6 @@ numpy
 pandas
 opencv-python
 glob2
+scikit-learn
+tensorflow
+pillow
