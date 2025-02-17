@@ -82,7 +82,7 @@ model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE),
 
 model.summary()
 
-checkpoint_path = os.path.join(MODEL_SAVE_DIR, "best_model.h5")
+checkpoint_path = os.path.join(MODEL_SAVE_DIR, "best_model.keras")
 checkpoint = ModelCheckpoint(checkpoint_path, monitor="val_accuracy", verbose=1,
                              save_best_only=True, mode="max")
 
