@@ -1,0 +1,24 @@
+name: green_guard_mobile
+description: A Flutter app for plant disease detection using TFLite.
+publish_to: "none"
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  tflite_flutter: ^0.9.0
+  tflite_flutter_helper: ^0.3.0
+  image_picker: ^0.8.4+3
+  image: ^3.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/model.tflite
+    - assets/labels.txt  # Optional: if you use a labels file
